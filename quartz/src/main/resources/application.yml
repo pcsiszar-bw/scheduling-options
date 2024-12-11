@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: quartz-scheduler
+
+  datasource:
+    url: ${SCHEDULE_STORE_URL:jdbc:postgresql://localhost:5432/schedule-store}
+    username: ${SCHEDULE_STORE_USR:user}
+    password: ${SCHEDULE_STORE_PWD:password}
+
+  quartz:
+    auto-startup: true
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org.quartz.scheduler.instanceName: ClusteredScheduler
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.clusterCheckinInterval: 20000
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+
+
+
+
+
