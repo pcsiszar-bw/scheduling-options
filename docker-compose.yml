@@ -2,7 +2,7 @@ services:
   postgres:
     image: 'postgres:latest'
     environment:
-      - 'POSTGRES_DB=schedule-store'
+      - 'POSTGRES_DB=scheduled_tasks'
       - 'POSTGRES_PASSWORD=password'
       - 'POSTGRES_USER=user'
     ports:
