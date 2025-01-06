@@ -1,0 +1,14 @@
+spring:
+  application.name: dbscheduler
+
+  datasource:
+    url: ${SCHEDULE_STORE_URL:jdbc:postgresql://localhost:5432/scheduled_tasks}
+    username: ${SCHEDULE_STORE_USR:user}
+    password: ${SCHEDULE_STORE_PWD:password}
+
+
+db-scheduler:
+  table-name: "scheduled_tasks"
+  polling-interval: "PT15S"
+  polling-strategy: lock_and_fetch
+

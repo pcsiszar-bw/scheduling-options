@@ -20,10 +20,10 @@ public class SampleJob implements Job {
             if (context.getPreviousFireTime() != null) {
                 System.err.println(context.getPreviousFireTime().toInstant());
             }
-            TimeUnit.MILLISECONDS.sleep(250);
-            if (Math.random() < 0.1) {
-                throw new RuntimeException("Simulated exception");
-            }
+            //TimeUnit.MILLISECONDS.sleep(250);
+            //if (Math.random() < 0.1) {
+            //    throw new RuntimeException("Simulated exception");
+            //}
             System.out.println("Hello " + context.getJobDetail().getJobDataMap().getString("name") + "!");
         } catch (Exception e) {
             log.error(e.getMessage(), e);

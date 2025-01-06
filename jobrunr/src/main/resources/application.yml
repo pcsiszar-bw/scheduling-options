@@ -3,7 +3,7 @@ spring:
     name: jobrunr
 
   datasource:
-    url: ${SCHEDULE_STORE_URL:jdbc:postgresql://localhost:5432/schedule-store}
+    url: ${SCHEDULE_STORE_URL:jdbc:postgresql://localhost:5432/scheduled_tasks}
     username: ${SCHEDULE_STORE_USR:user}
     password: ${SCHEDULE_STORE_PWD:password}
 
