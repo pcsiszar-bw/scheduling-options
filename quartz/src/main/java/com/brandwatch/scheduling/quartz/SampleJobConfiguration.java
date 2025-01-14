@@ -36,7 +36,7 @@ public class SampleJobConfiguration {
                         .withDescription("Sample trigger")
                         .withSchedule(
                                 SimpleScheduleBuilder.simpleSchedule()
-                                        .withIntervalInSeconds(2)
+                                        .withIntervalInSeconds(5)
                                         .repeatForever())
                         .build()))
                 .map(Trigger.class::cast)

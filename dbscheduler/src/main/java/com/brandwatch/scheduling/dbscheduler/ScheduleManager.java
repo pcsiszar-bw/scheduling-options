@@ -26,20 +26,20 @@ public class ScheduleManager {
     public void initSchedules() {
         for (int i = 0; i < 10000; i++) {
             TaskInstance<PlainScheduleAndData> instance = task.instance("ID" + i,
-                    new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(30)), Integer.toString(i)));
+                    new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(60)), Integer.toString(i)));
             scheduler.scheduleIfNotExists(instance, Instant.now());
         }
     }
 
-    //    @EventListener(ApplicationReadyEvent.class)
-    //    public void initSchedules() {
-    //        TaskInstance<PlainScheduleAndData> instance1 = task.instance("Adam",
-    //                new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(15)), "Adam"));
-    //
-    //        TaskInstance<PlainScheduleAndData> instance2 = task.instance("Ben",
-    //                new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(30)), "Ben"));
-    //
-    //        scheduler.scheduleIfNotExists(instance1, Instant.now());
-    //        scheduler.scheduleIfNotExists(instance2, Instant.now());
-    //    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void initSchedules() {
+//        TaskInstance<PlainScheduleAndData> instance1 = task.instance("Adam",
+//                new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(5)), "Adam"));
+//
+//        TaskInstance<PlainScheduleAndData> instance2 = task.instance("Ben",
+//                new PlainScheduleAndData(Schedules.fixedDelay(Duration.ofSeconds(5)), "Ben"));
+//
+//        scheduler.schedule(instance1, Instant.now());
+//        scheduler.schedule(instance2, Instant.now());
+//    }
 }

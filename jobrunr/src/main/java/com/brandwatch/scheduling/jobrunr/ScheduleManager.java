@@ -5,6 +5,8 @@ import org.jobrunr.jobs.annotations.Recurring;
 import org.jobrunr.jobs.context.JobContext;
 import org.jobrunr.jobs.context.JobDashboardProgressBar;
 import org.jobrunr.scheduling.JobScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class ScheduleManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleManager.class);
 
     private final JobScheduler jobScheduler;
 
@@ -28,34 +31,32 @@ public class ScheduleManager {
     @EventListener(ApplicationReadyEvent.class)
     public void initSchedules() {
         jobScheduler.enqueue(() -> System.out.println("Job Scheduler started"));
-        jobScheduler.scheduleRecurrently("AdamID", Duration.ofSeconds(5), () -> sayHello("Adam"));
-        jobScheduler.scheduleRecurrently("BenID", Duration.ofSeconds(5), () -> sayHello("Ben"));
-        jobScheduler.scheduleRecurrently("LongJob", Duration.ofSeconds(5), () -> longJob(JobContext.Null));
+        jobScheduler.scheduleRecurrently("AdamID", Duration.ofSeconds(30), () -> sayHello("Adam"));
+        jobScheduler.scheduleRecurrently("BenID", Duration.ofSeconds(30), () -> sayHello("Ben"));
+        jobScheduler.scheduleRecurrently("LongJob", Duration.ofSeconds(180), () -> longJob(JobContext.Null));
     }
 
     /* A note about recurring jobs here:
     Jobrunr's free license only allows up to a 100 recurring jobs, more or less. There is no hard limit,
     but the performance will be bottlenecked by the Data Access Patterns used to retrieve and trigger the due jobs.
     */
-    private void longJob(JobContext jobContext) throws InterruptedException {
+    public void longJob(JobContext jobContext) throws InterruptedException {
         JobDashboardProgressBar progressBar = jobContext.progressBar(60);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 60; i++) {
             TimeUnit.SECONDS.sleep(1);//do actual work
             progressBar.increaseByOne();
-            if (i % 100 == 0) {
-                jobContext.logger().info(String.format("Job at %d/%d", i, 60));
-            }
+            jobContext.logger().info(String.format("Job at %d/%d", i, 60));
         }
     }
 
     public static void sayHello(String name) {
-        System.out.println("Hello " + name);
+        LOGGER.info("Hello {}", name);
     }
 
-    @Recurring(id = "my-recurring-job", interval = "PT5S")
+    @Recurring(id = "my-recurring-job", interval = "PT30S")
     @Job(name = "My recurring job")
     public void sayHello(JobContext jobContext) {
-        System.out.println("Hello from annotation job");
+        LOGGER.info("Hello from annotation job");
     }
 
     /* A note about retries here:

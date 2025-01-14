@@ -9,6 +9,6 @@ spring:
 
 db-scheduler:
   table-name: "scheduled_tasks"
-  polling-interval: "PT15S"
+  polling-interval: "PT5S"
   polling-strategy: lock_and_fetch
 

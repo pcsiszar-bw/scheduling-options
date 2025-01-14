@@ -1,10 +1,7 @@
 package com.brandwatch.scheduling.dbscheduler;
 
 import com.github.kagkarlsson.scheduler.Scheduler;
-import com.github.kagkarlsson.scheduler.task.ExecutionContext;
-import com.github.kagkarlsson.scheduler.task.Task;
-import com.github.kagkarlsson.scheduler.task.TaskDescriptor;
-import com.github.kagkarlsson.scheduler.task.TaskInstance;
+import com.github.kagkarlsson.scheduler.task.*;
 import com.github.kagkarlsson.scheduler.task.helper.PlainScheduleAndData;
 import com.github.kagkarlsson.scheduler.task.helper.Tasks;
 import com.github.kagkarlsson.scheduler.task.schedule.Schedules;
@@ -14,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class ScheduleConfiguration {
@@ -22,9 +18,9 @@ public class ScheduleConfiguration {
 
     @Bean
     Task<Void> helloWorldTask() {
-        return Tasks.recurring("hello-world", Schedules.fixedDelay(Duration.ofSeconds(60)))
+        return Tasks.recurring("hello-world", Schedules.cron("*/15 * * * * *"))
                 .execute((instance, context) -> {
-                    System.out.println("Hello World!");
+                    log.info("Hello World!");
                 });
     }
 
@@ -39,30 +35,13 @@ public class ScheduleConfiguration {
 
         // This task will only start running when at least one instance of the task has been scheduled
         return Tasks.recurringWithPersistentSchedule(taskDescriptor)
-                .execute(
-                        (TaskInstance<PlainScheduleAndData> taskInstance, ExecutionContext executionContext) -> {
-                            try {
-                                taskImpl(taskInstance);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                .onFailure(new FailureHandler.MaxRetriesFailureHandler<>(6,
+                        new FailureHandler.ExponentialBackoffFailureHandler<>(Duration.ofSeconds(1), 2)))
+                .execute(this::taskImpl);
     }
 
-    private void taskImpl(TaskInstance<PlainScheduleAndData> taskInstance) throws InterruptedException {
+    private void taskImpl(TaskInstance<PlainScheduleAndData> taskInstance, ExecutionContext executionContext) {
         PlainScheduleAndData data = taskInstance.getData();
-        sayHello(data);
-    }
-
-    public void sayHello(PlainScheduleAndData data) throws InterruptedException {
-        log.info(
-                String.format(
-                        "Working hard according to schedule '%s' for customer %s",
-                        data.getSchedule(), data.getData()));
-        TimeUnit.SECONDS.sleep(5);
-        log.info(
-                String.format(
-                        "Ran according to schedule '%s' for customer %s",
-                        data.getSchedule(), data.getData()));
+        log.info("Hello {}", data.getData());
     }
 }
